@@ -1,7 +1,7 @@
 ﻿# Nome dell'Add-on
 name: "Hexesoft Mitsubishi Bridge"
 # Versione del software
-version: "1.0.2"
+version: "1.0.3"
 # Identificativo interno
 slug: "hexesoft_mitsubishi"
 # Descrizione estesa
@@ -16,7 +16,7 @@ init: false
 map:
   - config:rw
 
-# VALORI DI DEFAULT INIZIALI
+# VALORI DI DEFAULT INIZIALI (Puliti per l'utente finale)
 options:
   mitsubishi:
     host: ""
@@ -25,10 +25,15 @@ options:
     bticino_base_topic: "bticino_bridge"
     heating_boost_delta: 3.0
     cooling_boost_delta: 0.0
-  # NUOVO CASSETTO "DISPOSITIVI"
-  devices:
-    air_conditioners: []
-    hydronics: []
+
+  # GRUPPO CONDIZIONATORI (Stile BTicino: lista vuota)
+  air_conditioners:
+    devices: []
+
+  # GRUPPO IDRONICI (Stile BTicino: lista vuota)
+  hydronics:
+    devices: []
+
   mqtt:
     host: ""
     port: 1883
@@ -36,11 +41,11 @@ options:
     password: ""
     base_topic: "mitsubishi_bridge"
     discovery_prefix: "homeassistant"
-  # NUOVO CASSETTO "AVANZATE"
+    
   advanced:
-    log_level: "debug"
+    log_level: "info"
 
-# SCHEMA GRAFICO (Qui diciamo ad HA di creare i menu a tendina)
+# SCHEMA GRAFICO
 schema:
   mitsubishi:
     host: str
@@ -50,14 +55,15 @@ schema:
     heating_boost_delta: float
     cooling_boost_delta: float
   
-  # DEFINIZIONE DEL CASSETTO DISPOSITIVI
-  devices:
-    air_conditioners:
+  air_conditioners:
+    devices:
       - name: str
         id: str
         bticino_zone: str?
         supports_dry: bool?
-    hydronics:
+        
+  hydronics:
+    devices:
       - name: str
         id: str
         type: list(HOT_WATER|HEATING)
@@ -70,6 +76,5 @@ schema:
     base_topic: str
     discovery_prefix: str
     
-  # DEFINIZIONE DEL CASSETTO AVANZATE
   advanced:
     log_level: list(debug|info|warning|error)

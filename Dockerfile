@@ -15,5 +15,5 @@ COPY Hexesoft-Mitsubishi .
 # Diamo i permessi di esecuzione direttamente al programma
 RUN chmod +x /app/Hexesoft-Mitsubishi
 
-# Avviamo il programma nativamente (Addio run.sh!)
+# Avviamo il programma nativamente 
 CMD [ "/app/Hexesoft-Mitsubishi" ]
