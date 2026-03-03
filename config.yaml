@@ -1,11 +1,11 @@
 ﻿# Nome dell'Add-on
 name: "Hexesoft Mitsubishi Bridge"
 # Versione del software
-version: "1.0.4"
+version: "1.0.5"
 # Identificativo interno
 slug: "hexesoft_mitsubishi"
 # Descrizione estesa
-description: "Bridge Mitsubishi con configurazione grafica integrata in Home Assistant."
+description: "Bridge Mitsubishi in Home Assistant."
 # Architetture supportate
 arch:
   - aarch64
