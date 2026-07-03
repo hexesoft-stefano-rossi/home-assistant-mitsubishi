@@ -1,6 +1,6 @@
 ﻿name: "Hexesoft Mitsubishi"
 description: "Bridge Mitsubishi in Home Assistant"
-version: "2.1.0"
+version: "2.2.0"
 slug: "hexesoft_mitsubishi"
 arch:
   - aarch64
@@ -50,6 +50,8 @@ schema:
         id: str
         bticino_zone: str?
         supports_dry: bool?
+        cooling_gateway: bool?
+        heating_gateway: bool?
         
   hydronics:
     devices:
