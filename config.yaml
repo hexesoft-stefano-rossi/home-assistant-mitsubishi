@@ -1,6 +1,6 @@
 ﻿name: "Hexesoft Mitsubishi"
 description: "Bridge Mitsubishi in Home Assistant"
-version: "2.2.0"
+version: "2.2.1"
 slug: "hexesoft_mitsubishi"
 arch:
   - aarch64
