@@ -26,7 +26,7 @@ A scelta, funziona in modo **autonomo** (ogni macchina è un clima a sé in HA) 
 - **Logica Ibrida (boost)**: in modalità integrata accende il VRF in aiuto al termostato BTicino quando la stanza è troppo lontana dal setpoint (parametri *delta*).
 - **Riconnessione automatica** e stato Online/Offline del bridge.
 - **Pulsante "Scansiona rete"** per forzare una lettura immediata di tutte le macchine.
-- **Log leggibile** a livelli configurabili (`info`, `debug`, `warning`, `error`).
+- **Log leggibile** a livelli configurabili (`info`, `debug`, `warning`, `error`), con formato tabellare simmetrico (vedi *Formato del log*).
 
 ## Le due modalità di lavoro
 
@@ -53,6 +53,43 @@ In modalità integrata decidi quanto dev'essere "aggressivo" l'intervento del VR
 ## Come funziona (in breve)
 
 Il bridge apre un **tunnel WebSocket** verso l'AE-200 (sotto-protocollo `b_xmlproc`) e scambia messaggi **XML** per leggere lo stato e inviare i comandi. Interroga le macchine una alla volta a intervalli regolari (polling) e pubblica gli stati su MQTT con flag *retain*, così Home Assistant li ritrova anche dopo un riavvio. In modalità integrata ascolta in più i termostati BTicino sul broker condiviso.
+
+## Formato del log
+
+Ogni riga di log ha una struttura tabellare fissa così da restare **incolonnata** anche in sessioni lunghe:
+
+```
+[HH:mm:ss.fff]  LIVELLO | MITT -> DEST | messaggio
+```
+
+- **`MITT`** è chi genera l'informazione, **`DEST`** è chi la riceve/consuma.
+- Entrambe le sigle sono **sempre di 4 caratteri**, così la freccia `->` e i due `|` cadono nelle stesse colonne per tutta la giornata.
+
+### Sigle usate
+
+| Sigla  | Cosa rappresenta                                                                                     |
+|--------|------------------------------------------------------------------------------------------------------|
+| `CORE` | Sistema/lifecycle: avvio del servizio, arresto pulito, configurazione non valida, host .NET          |
+| `HEXE` | Logica interna del Bridge Hexesoft Mitsubishi (Manager, strategia ibrida, cache, indice zone)         |
+| `MQTT` | Broker MQTT: connessione, riconnessione, sottoscrizioni, pubblicazioni grezze                        |
+| `MITS` | Controller Mitsubishi AE-200 (tunnel WebSocket, letture VRF/idronici, comandi split)                 |
+| `BTIC` | Peer BTicino Bridge (termostati BTicino e canale condiviso `hexesoft_gateway/*`)                     |
+| `HOME` | Home Assistant (pubblicazione Auto-Discovery, pulizia dispositivi fantasma)                          |
+
+### Esempi
+
+```
+[20:14:56.177] INFO   | MQTT -> HEXE | Connessione MQTT ripristinata con successo!
+[20:14:56.658] INFO   | HEXE -> BTIC | Annunciato ONLINE su hexesoft_gateway/status
+[15:32:04.912] DEBUG  | HEXE -> MITS | Inizio scansione dispositivi
+[15:32:05.021] DEBUG  | MITS -> HEXE | Split "3 cucina VRF" ID=26 Drive=OFF Mode=AUTO Fan=MID2 Inlet=26.8
+[15:32:05.022] DEBUG  | MITS -> MQTT | Pubblicazione: mitsubishi_bridge/climate/26/temp/state = 26.8
+[15:32:11.404] INFO   | BTIC -> MITS | zona "1 scala nord": ventola "alta" applicata al VRF
+[14:29:41.010] INFO   | HEXE -> HOME | Pubblicato dispositivo: "3 cucina VRF"
+[14:29:44.955] INFO   | HOME -> HEXE | Trovato dispositivo fantasma: homeassistant/climate/.../config
+```
+
+Le righe con `[SOPPRESSO]` sono soppressioni volute (valori invariati, retained non applicati al VRF, comandi anti-spam identici all'ultimo): compaiono solo in `debug` e aiutano a capire perché una certa azione non è stata eseguita.
 
 ## Requisiti
 
